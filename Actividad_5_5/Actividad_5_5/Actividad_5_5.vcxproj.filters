@@ -20,8 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="recoge-modified.lib">
+    <Library Include="recoge.lib">
       <Filter>Archivos de recursos</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Main.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
