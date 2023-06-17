@@ -20,9 +20,6 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SleepCompensado.c">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Main.c">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
