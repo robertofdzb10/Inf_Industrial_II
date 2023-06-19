@@ -9,7 +9,6 @@ void leeCodigoBarras(void* datos);
 
 // Si tomamos información de un unsigned long long, su estructura tiene que estar formada por unsigned long long, y de ahí ir dividiendo en bits
 typedef struct {
-
 	// Parte Uno
 	unsigned long long v0: 1;
 	unsigned long long v1 : 2; // Porque sin signo y por que long long y en que ingluye que me digan little endian
@@ -25,7 +24,7 @@ typedef struct {
 	unsigned long long v5_4_1 : 44;
 	// Parte tres
 	unsigned long long v5_4_2 : 20;
-	unsigned long long * v5_5; // Su dimensión es este valor dividido entre 8
+	unsigned long long v5_5 : 12; // Su dimensión es este valor dividido entre 8
 } Datos;
 
 int main() {
@@ -40,8 +39,8 @@ int main() {
 	// Varaibles para funciónes de la librería
 	int nuevoPaquete = 1;
 	
-
 	Datos paquete;
+	int salir = 0;
 
 	// Archivo
 	FILE *archivo = fopen("codigoBarras.txt", "w");
@@ -60,7 +59,7 @@ int main() {
 	proximoDisparo = clock(); //Damos a proximoDisparo el valor de T0
 
 	// Bucel principal
-	while ( !_kbhit() ) {
+	while ( salir != 1 ) {
 
 		nuevoPaquete = leeCelulaFotoelectrica();
 		if (nuevoPaquete == 1) { // No hay paquete
@@ -142,22 +141,55 @@ int main() {
 			}
 			else if (paquete.v4 >= 16) {
 				int dimension = paquete.v4 / 8;
-
-
-				unsigned char* temp = malloc(dimension * sizeof(char)); // Array de bytes, valor variable, por eso usamos memoría dinámica 
+				unsigned char* temp = malloc(dimension * sizeof(unsigned char)); // Array de bytes, valor variable, por eso usamos memoría dinámica 
 				if (temp == NULL) {
 					printf("Error reservando memoria.");
 					return 1;
 				}
+				unsigned long long temp_1;
+				temp_1 = paquete.v5_5;
+				temp_1 = temp_1 << 12;
+				temp_1 = temp_1 | paquete.v5_4_2;
+				temp_1 = temp_1 << 44;
+				temp_1 = temp_1 | paquete.v5_4_1;
+				temp_1 = temp_1 << 8;
+				temp_1 = temp_1 | paquete.v5_3;
+				temp_1 = temp_1 << 8;
+				temp_1 = temp_1 | paquete.v5_2;
+				temp_1 = temp_1 << 4;
+				temp_1 = temp_1 | paquete.v5_1_2;
+				temp_1 = temp_1 << 4;
+				temp_1 = temp_1 | paquete.v5_1_1;
+				temp_1 = temp_1 << 8;
+				temp_1 = temp_1 | paquete.v5_0;
 
-				int* puntero_temp;
-				puntero_temp = &paquete;
+				memcpy(temp, &temp_1, dimension); //Los datos empiezan en la dirección de paquete más 52 
 
-				for (int i = 0; i < dimension; i++) {
-					temp[i] = puntero_temp[i];
-					fprintf(archivo, "%d ", temp[i]);
+
+				if (dimension >= 5){ // Solo puede pasar cuando la dimensión es igual a 5
+					char palabra_objetivo[5] = { 'S', 'a', 'l', 'i', 'r'};
+					int contador = 0;
+					for (int i = 0; i < dimension && contador != 5; i++) {
+						if (temp[i] == palabra_objetivo[i]) {
+							contador++;
+						}
+						else {
+							contador = 0;
+						}
+					}
+					if (contador == 5) {
+						salir = 1;
+					}
+					else {
+						contador = 0;
+					}
 				}
 
+				for (int i = 0; i < dimension; i++) {
+					printf("%d ", temp[i]);
+					fprintf(archivo, "%d ", temp[i]);
+				}
+				printf("\n");
 				fprintf(archivo, "\n");
 				free(temp);
 			}
