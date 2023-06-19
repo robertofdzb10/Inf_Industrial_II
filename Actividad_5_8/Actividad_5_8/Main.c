@@ -143,11 +143,23 @@ int main() {
 			else if (paquete.v4 >= 16) {
 				int dimension = paquete.v4 / 8;
 
-				//char temp[dimension]; // Array de bytes, valor variable, por eso usamos memoría dinámica 
+
+				unsigned char* temp = malloc(dimension * sizeof(char)); // Array de bytes, valor variable, por eso usamos memoría dinámica 
+				if (temp == NULL) {
+					printf("Error reservando memoria.");
+					return 1;
+				}
+
+				int* puntero_temp;
+				puntero_temp = &paquete;
 
 				for (int i = 0; i < dimension; i++) {
+					temp[i] = puntero_temp[i];
+					fprintf(archivo, "%d ", temp[i]);
 				}
-				fprintf(archivo, "%d\n", paquete.v5_0);
+
+				fprintf(archivo, "\n");
+				free(temp);
 			}
 
 			// Esperar 500 ms
