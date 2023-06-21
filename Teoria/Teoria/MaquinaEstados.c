@@ -9,17 +9,17 @@ int main() {
 
 	while ( _kbhit ) {
 
-		// Fuera del switch el c骴igo comun para todos los estados
+		// Fuera del switch el c贸digo comun para todos los estados
 
 		switch (estado) {
 
 			case Inicio:
-				// C骴igo de inicializaci髇
-				estado = 1;
+				// C贸digo de inicializaci贸n
+				estado = Encendido;
 				break;
 
 			case Encendido:
-				// C骴igo a ejecutar mientras este en el estado 1
+				// C贸digo a ejecutar mientras este en el estado 1
 
 				break;
 
@@ -28,7 +28,7 @@ int main() {
 				break;
 
 			default: 
-				// Situaci髇 de error (When others)
+				// Situaci贸n de error (When others)
 				break;
 		}
 	}
