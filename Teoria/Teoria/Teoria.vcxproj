@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BuferCircular.c" />
     <ClCompile Include="MaquinaEstados.c" />
     <ClCompile Include="SleepCompensado.c" />
   </ItemGroup>
