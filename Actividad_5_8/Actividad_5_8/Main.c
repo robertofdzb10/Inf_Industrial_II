@@ -84,8 +84,6 @@ int main() {
 			// La conversion de datos lo hace el fprintf, le pasamos los datos en binario y los convierte al formato correspondiente
 			fprintf(archivo, "[%lu;%02lu:%02lu:%02lu,%03lu]: 0x%04X (%d) ", dias, horas, minutos, segundos, milisegundos, paquete.v3, paquete.v4);
 
-			
-
 			if (paquete.v4 == 1) {
 				fprintf(archivo, "%u\n", paquete.v5_0);
 			}
@@ -166,11 +164,11 @@ int main() {
 				memcpy(temp, &temp_1, dimension); //Los datos empiezan en la dirección de paquete más 52 
 
 
-				if (dimension >= 5){ // Solo puede pasar cuando la dimensión es igual a 5
+				if (dimension >= 5){ // Solo puede pasar cuando la dimensión es igualo mayor  a 5
 					char palabra_objetivo[5] = { 'S', 'a', 'l', 'i', 'r'};
 					int contador = 0;
 					for (int i = 0; i < dimension && contador != 5; i++) {
-						if (temp[i] == palabra_objetivo[i]) {
+						if (temp[i] == palabra_objetivo[contador]) {
 							contador++;
 						}
 						else {
