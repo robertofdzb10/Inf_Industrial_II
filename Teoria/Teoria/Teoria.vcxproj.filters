@@ -15,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MaquinaEstados.c">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
     <ClCompile Include="SleepCompensado.c">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
