@@ -36,7 +36,7 @@ typedef struct {
 	int cantidad;
 	double datosPropios;
 	long tiempoInFIFO;
-	time_t time;
+	time_t time; //TODO el sacar la fecha y hora
 }Pedido;
 
 
