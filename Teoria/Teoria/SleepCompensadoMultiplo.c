@@ -1,35 +1,15 @@
+// Sleep para cuando se desea que no se empieze a contar en cero, tal y como sucede en el sleep compensado normal
+
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 
 #define PERIODO 500 // Periodo del ciclo en ms
 
-void SleepCompensado(DWORD tiempo) {
-
-	// Variables
-	long espera;
-	static long proximoDisparo = -1; // Se va usar el -1 como valor especial, al ser estática se retiene su valor entre llamadas sucesivas de la función
-
-	if (tiempo == 0) {
-		proximoDisparo = clock();
-	}
-	else {
-		if (proximoDisparo == -1) {
-			proximoDisparo = clock();
-		}
-		proximoDisparo += tiempo;
-		espera = proximoDisparo - clock();
-		if (espera > 0) {
-			Sleep(espera);
-		}
-	}
-	return;
-}
-
 void SleepCompensadoMultiplo(DWORD tiempo) {
 
 	long espera;
-	espera = tiempo - (clock()%tiempo);
+	espera = tiempo - (clock()%tiempo); // 500 - (300%500 = 300) -> 500-300 = 200
 	Sleep(espera);
 	return;
 }

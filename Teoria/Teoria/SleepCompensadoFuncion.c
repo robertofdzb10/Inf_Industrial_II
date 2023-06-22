@@ -14,10 +14,7 @@ void SleepCompensado(DWORD tiempo) {
 		proximoDisparo = clock();
 	}
 	else {
-		if (proximoDisparo == -1) {
-			proximoDisparo = clock();
-		}
-		proximoDisparo += tiempo;
+		proximoDisparo = proximoDisparo + tiempo;
 		espera = proximoDisparo - clock();
 		if (espera > 0) {
 			Sleep(espera);
