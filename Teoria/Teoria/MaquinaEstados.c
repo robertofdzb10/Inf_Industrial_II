@@ -7,7 +7,7 @@ int main() {
 	enum Estados { Inicio = 0,  Encendido = 1, Apagado = 2};
 	enum Estados estado = Inicio;
 
-	while ( _kbhit ) {
+	while ( !_kbhit ) {
 
 		// Fuera del switch el código comun para todos los estados
 
