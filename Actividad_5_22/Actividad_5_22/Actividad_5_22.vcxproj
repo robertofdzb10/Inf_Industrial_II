@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d1a80c84-9046-4849-95fa-ce41cbd3d252}</ProjectGuid>
-    <RootNamespace>Teoria</RootNamespace>
+    <ProjectGuid>{cb91cf88-674c-493d-a76b-4de793218c25}</ProjectGuid>
+    <RootNamespace>Actividad522</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,12 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BuferCircular.c" />
-    <ClCompile Include="ColaFIFO.c" />
-    <ClCompile Include="MaquinaEstados.c" />
-    <ClCompile Include="SleepCompensado.c" />
-    <ClCompile Include="SleepCompensadoFuncion.c" />
-    <ClCompile Include="SleepCompensadoMultiplo.c" />
+    <Library Include="Pedidos.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
