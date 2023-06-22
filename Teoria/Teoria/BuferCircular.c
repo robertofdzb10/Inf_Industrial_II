@@ -4,14 +4,15 @@
 #include <stdio.h>
 
 typedef struct {
-	double datosAlmacenar[1000]; // Tamaño del array circular
+	double datosAlmacenar[1000]; // Array circular
 	int dim; // Dimensión del array circular, 1000 en este caso
 	int posicion; // Posición actual del buffer, para recorrerlo
 	int nCapturas; // Capturas totales de datos del sensor, aunque el array se sobreescriba, en esta variable se podra ver cuantos datos se han ido almacenando
 } BCA; // Buffer Circular Array
 
 int main() {
-
+	
+	// Varaibles
 	int i;
 	double dato;
 	BCA par;

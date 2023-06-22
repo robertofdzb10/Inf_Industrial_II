@@ -24,5 +24,8 @@
     <ClCompile Include="BuferCircular.c">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="ColaFIFO.c">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
