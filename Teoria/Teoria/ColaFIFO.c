@@ -29,6 +29,9 @@ int main() {
 		for (i = 0; i < dimDatos; i++) {
 			par.datosAlmacenar[par.posicionMeter] = datos[i];
 			if ( (par.posicionMeter + 1)%par.dim != par.posicionSacar) {  // Este if busca comprobar que el índice posicionMeter sea distinto de posicionSacar (10001/1000 resto -> 1, por lo que devolvería el valor uno, en caso de superar los límites del array)
+				par.posicionMeter = (par.posicionMeter + 1) % par.dim; // Si entra aquí la cola no esta llena
+			}
+			else {
 				printf("La cola esta llena y se procederá a la sobreescritura de los datos.");
 				par.posicionMeter = (par.posicionMeter + 1) % par.dim; // Si entra aquí la cola esta llena y se empezarían a perder datos
 			}
