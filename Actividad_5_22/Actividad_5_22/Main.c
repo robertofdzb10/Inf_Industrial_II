@@ -1,7 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define PERIODO 300
 
@@ -23,7 +26,6 @@ void SleepCompensado(DWORD tiempo) {
 	else {
 		proximoDisparo = tiempo + proximoDisparo; // T0 (o T0 más tiempo del anterior ciclo) más el tiempo que tarda el ciclo actual
 		espera = proximoDisparo - clock();
-		//printf("Tiempo esperado: %d\n",espera);
 		if (espera > 0) {
 			Sleep(espera);
 		}
@@ -34,9 +36,9 @@ void SleepCompensado(DWORD tiempo) {
 typedef struct {
 	char *nombre; // Los char almacenan un caracter, por lo que si deseamos alamcenar varios caracteres, usamos cadenas de chars, expresadas en forma de arrays.
 	int cantidad;
-	double datosPropios;
+	double *datosPropios;
 	long tiempoInFIFO;
-	time_t time; //TODO el sacar la fecha y hora
+	struct tm *time;
 }Pedido;
 
 
@@ -50,14 +52,16 @@ typedef struct {
 int main() {
 
 	// Variables problema
+	int cantidad_p_t = 0;
+	double* datosPropios_p_t[100]; // Le damos un tamño grande (en este caso el máximo) para que todos los datos esten dentro del double ya que sino al estar fuera pueden ser reescritos por otros elementos
 	Pedido pedido_almacenar;
 	pedido_almacenar.nombre = NULL;
 	pedido_almacenar.cantidad = 0;
-	pedido_almacenar.datosPropios = 0.0;
+	pedido_almacenar.datosPropios = NULL;
 	Pedido pedido_extraer;
 	pedido_extraer.nombre = NULL;
 	pedido_extraer.cantidad = 0;
-	pedido_extraer.datosPropios = 0.0;
+	pedido_extraer.datosPropios = NULL;
 	int static contador = 0; // Mientras se espera que salga algun pedido, siguen corriendo los 1,2 segundos de preparación para la salida
 
 	// Varibales FIFO
@@ -70,18 +74,26 @@ int main() {
 
 	// Bucle principal 
 	while ( !_kbhit() ) {
-		pedido_almacenar.nombre = recibePedido(&pedido_almacenar.cantidad, &pedido_almacenar.datosPropios);
+		pedido_almacenar.nombre = recibePedido(&cantidad_p_t, &datosPropios_p_t); // Pasamos un puntero, y hacemos que la dirección de este puntero sea la de retorno, almacenando así los valores. En verdad solo se almacenará la dirección donde comienzan los valores, la cual será la nueva dirección de datosPropios_p_t, siendo el valor real de este de datosPropios_p_t el principio de la cadena, pero no entera.
 
 		if (pedido_almacenar.nombre == 0) { // Si la dirección que devuelve es cero, pasamos a la proxima iteración
-			//SleepCompensado(PERIODO);
-			//continue; // Saltamos a la siguiente iteración, sin ejecutar nada del cóidgo de delante, aunque este fuera del if
 		}
 		else {
-
 			// FIFO Insercción de datos
-			par.datosAlmacenar[par.posicionMeter] = pedido_almacenar;
 			pedido_almacenar.tiempoInFIFO = clock();
-
+			pedido_almacenar.cantidad = cantidad_p_t;
+			// Memoria dinámica 
+			pedido_almacenar.datosPropios = (double*)malloc(sizeof(double) * pedido_almacenar.cantidad);
+			if (pedido_almacenar.datosPropios == NULL) {
+				printf("Error en la asignación de memoria dinámica");
+				return 1;
+			}
+	
+			memcpy(pedido_almacenar.datosPropios, &datosPropios_p_t, sizeof(double)* pedido_almacenar.cantidad); // Copiamos sizeof(double) * pedido_almacenar.cantidad bytes, desde la dirección apuntada por datosPropios_p_t a la cadena pedido_almacenar.datosPropios
+			time_t tiempo; // Declaración de la variable time_t
+			time(&tiempo); // Esto devuelve el número de segundos que han trascurrido desde 1970
+			pedido_almacenar.time = localtime(&tiempo); // Convierte los segundos desde 1970 a año, mes, días...
+			par.datosAlmacenar[par.posicionMeter] = pedido_almacenar;
 			if ((par.posicionMeter + 1) % par.dim != par.posicionSacar) {
 				par.posicionMeter = (par.posicionSacar + 1) % par.dim;
 			}
@@ -89,25 +101,39 @@ int main() {
 				pedidoPerdido(); // Llamamos a la función de pedido perdido
 				par.posicionMeter = (par.posicionSacar + 1) % par.dim; // Descartamos ese pedido sobreescribiendo
 			}
+			//free(pedido_almacenar.datosPropios);
 		}
 
 		if (contador > 4 ) { // Cada cuatro iteraciones
 			contador++;
 			// FIFO Extracción de datos
 			if (par.posicionSacar != par.posicionMeter) {
+				// Memoría dinámica 
+				pedido_extraer.cantidad = par.datosAlmacenar[par.posicionSacar].cantidad;
+				pedido_extraer.datosPropios = (double*)malloc(sizeof(double) * pedido_extraer.cantidad);
+				if (pedido_extraer.datosPropios == NULL) {
+					printf("Error en la asignación de memoria dinámica");
+					return 1;
+				}
 				pedido_extraer = par.datosAlmacenar[par.posicionSacar];
 				pedido_extraer.tiempoInFIFO = clock() - pedido_extraer.tiempoInFIFO;
-				ponEnMarchaPedido(pedido_extraer.nombre, pedido_extraer.cantidad, &pedido_extraer.datosPropios, pedido_almacenar.dia, pedido_almacenar.mes, pedido_almacenar.ano, pedido_almacenar.hora, pedido_almacenar.minutos, pedido_almacenar.segundos, pedido_extraer.tiempoInFIFO);
+				ponEnMarchaPedido(pedido_extraer.nombre, pedido_extraer.cantidad, pedido_extraer.datosPropios, pedido_extraer.time->tm_mday, pedido_extraer.time->tm_mon+1, pedido_extraer.time->tm_year+1900, pedido_extraer.time->tm_hour, pedido_extraer.time->tm_min, pedido_extraer.time->tm_sec, pedido_extraer.tiempoInFIFO); // Sumamos uno al mes ya que de enero a febrero (ej.) a pasado un mes pero es el mes dos
 				par.posicionSacar = (par.posicionSacar + 1) % par.dim;
 				contador = contador - 4;
+				//	free(pedido_extraer.datosPropios);
 			}	
 		}
 		else {
 			contador++;
 		}
 		SleepCompensado(PERIODO); // Al final siempre
-
-		
 	}
+	//// Liberación de memoria dinámica
+	//if (pedido_almacenar.datosPropios != NULL) {
+	//	free(pedido_almacenar.datosPropios);
+	//}
+	//if (pedido_extraer.datosPropios != NULL) {
+	//	free(pedido_extraer.datosPropios);
+	//}
 	return 0;
 }
