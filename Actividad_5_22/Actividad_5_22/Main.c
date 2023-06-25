@@ -93,7 +93,17 @@ int main() {
 			time_t tiempo; // Declaración de la variable time_t
 			time(&tiempo); // Esto devuelve el número de segundos que han trascurrido desde 1970
 			pedido_almacenar.time = localtime(&tiempo); // Convierte los segundos desde 1970 a año, mes, días...
-			par.datosAlmacenar[par.posicionMeter] = pedido_almacenar;
+			par.datosAlmacenar[par.posicionMeter].datosPropios = (double*)malloc(sizeof(double) * pedido_almacenar.cantidad);
+			if (par.datosAlmacenar[par.posicionMeter].datosPropios == NULL) {
+				printf("Error en la asignación de memoria dinámica");
+				return 1;
+			}
+			// Pasamos los datos, si hicieramos asignación directa, si alguno de los miembros de la estructura es un puntero, se copiará el valor del puntero y no los datos a los que apunta
+			par.datosAlmacenar[par.posicionMeter].nombre = pedido_almacenar.nombre;
+			par.datosAlmacenar[par.posicionMeter].cantidad = pedido_almacenar.cantidad;
+			par.datosAlmacenar[par.posicionMeter].tiempoInFIFO = pedido_almacenar.tiempoInFIFO;
+			par.datosAlmacenar[par.posicionMeter].time = pedido_almacenar.time;
+			memcpy(par.datosAlmacenar[par.posicionMeter].datosPropios, pedido_almacenar.datosPropios, sizeof(double) * pedido_almacenar.cantidad);
 			if ((par.posicionMeter + 1) % par.dim != par.posicionSacar) {
 				par.posicionMeter = (par.posicionSacar + 1) % par.dim;
 			}
@@ -101,7 +111,8 @@ int main() {
 				pedidoPerdido(); // Llamamos a la función de pedido perdido
 				par.posicionMeter = (par.posicionSacar + 1) % par.dim; // Descartamos ese pedido sobreescribiendo
 			}
-			//free(pedido_almacenar.datosPropios);
+			// Liberación de memoria dinámica
+			free(pedido_almacenar.datosPropios);
 		}
 
 		if (contador > 4 ) { // Cada cuatro iteraciones
@@ -115,12 +126,19 @@ int main() {
 					printf("Error en la asignación de memoria dinámica");
 					return 1;
 				}
-				pedido_extraer = par.datosAlmacenar[par.posicionSacar];
+				// Pasamos los datos
+				pedido_extraer.nombre = par.datosAlmacenar[par.posicionSacar].nombre;
+				pedido_extraer.tiempoInFIFO = par.datosAlmacenar[par.posicionSacar].tiempoInFIFO;
+				pedido_extraer.time = par.datosAlmacenar[par.posicionSacar].time;
+				memcpy(pedido_extraer.datosPropios, par.datosAlmacenar[par.posicionSacar].datosPropios, sizeof(double) * pedido_extraer.cantidad);
+				// Liberación de memoria dinámica
+				free(par.datosAlmacenar[par.posicionSacar].datosPropios);
 				pedido_extraer.tiempoInFIFO = clock() - pedido_extraer.tiempoInFIFO;
 				ponEnMarchaPedido(pedido_extraer.nombre, pedido_extraer.cantidad, pedido_extraer.datosPropios, pedido_extraer.time->tm_mday, pedido_extraer.time->tm_mon+1, pedido_extraer.time->tm_year+1900, pedido_extraer.time->tm_hour, pedido_extraer.time->tm_min, pedido_extraer.time->tm_sec, pedido_extraer.tiempoInFIFO); // Sumamos uno al mes ya que de enero a febrero (ej.) a pasado un mes pero es el mes dos
 				par.posicionSacar = (par.posicionSacar + 1) % par.dim;
 				contador = contador - 4;
-				//	free(pedido_extraer.datosPropios);
+				// Liberación de memoria dinámica
+				free(pedido_extraer.datosPropios);
 			}	
 		}
 		else {
@@ -128,12 +146,5 @@ int main() {
 		}
 		SleepCompensado(PERIODO); // Al final siempre
 	}
-	//// Liberación de memoria dinámica
-	//if (pedido_almacenar.datosPropios != NULL) {
-	//	free(pedido_almacenar.datosPropios);
-	//}
-	//if (pedido_extraer.datosPropios != NULL) {
-	//	free(pedido_extraer.datosPropios);
-	//}
 	return 0;
 }
