@@ -18,11 +18,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LRC_Checksum.c" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d1a80c84-9046-4849-95fa-ce41cbd3d252}</ProjectGuid>
-    <RootNamespace>Teoria</RootNamespace>
+    <ProjectGuid>{00424d05-97cf-4430-939c-f3641710e443}</ProjectGuid>
+    <RootNamespace>Practicar</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -126,17 +129,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="BuferCircular.c" />
-    <ClCompile Include="ColaFIFO.c" />
-    <ClCompile Include="LRC_Checksum.c" />
-    <ClCompile Include="LRC_Longitudinal.c" />
-    <ClCompile Include="MaquinaEstados.c" />
-    <ClCompile Include="SleepCompensado.c" />
-    <ClCompile Include="SleepCompensadoFuncion.c" />
-    <ClCompile Include="SleepCompensadoMultiplo.c" />
-    <ClCompile Include="VRC.c" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
